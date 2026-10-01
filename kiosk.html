@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ウイングベイウォーキング受付</title>
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="assets/config.js"></script>
+</head>
+<body class="kiosk">
+<div class="kiosk-wrap">
+  <h1>ウイングベイウォーキング</h1>
+  <p class="kiosk-sub">スマートフォンの「カメラ」アプリでこのQRコードを読み取ってください</p>
+  <div id="qrcode" class="qrbox"></div>
+  <p id="countdown" class="countdown"></p>
+  <p id="offline" class="offline" style="display:none"></p>
+</div>
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var adminKey = params.get('key') || '';
+  var qrEl = document.getElementById('qrcode');
+  var countdownEl = document.getElementById('countdown');
+  var offlineEl = document.getElementById('offline');
+  var countdownTimer = null;
+  var retryTimer = null;
+
+  // ---- 画面スリープ防止（対応端末のみ） ----
+  var wakeLock = null;
+  async function requestWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLock = await navigator.wakeLock.request('screen');
+      }
+    } catch (e) { /* 対応していない端末もあるため無視してよい */ }
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') requestWakeLock();
+  });
+  requestWakeLock();
+
+  function startCountdown(seconds) {
+    clearInterval(countdownTimer);
+    var remain = Math.max(1, seconds);
+    countdownEl.textContent = remain + '秒後に更新';
+    countdownTimer = setInterval(function () {
+      remain -= 1;
+      if (remain <= 0) {
+        clearInterval(countdownTimer);
+        fetchToken();
+        return;
+      }
+      countdownEl.textContent = remain + '秒後に更新';
+    }, 1000);
+  }
+
+  function renderQr(token) {
+    var base = window.WB_CONFIG.SITE_BASE_URL;
+    var url = base + 'start.html?t=' + encodeURIComponent(token);
+    qrEl.innerHTML = '';
+    new QRCode(qrEl, { text: url, width: 320, height: 320, correctLevel: QRCode.CorrectLevel.M });
+  }
+
+  async function fetchToken() {
+    try {
+      var base = window.WB_CONFIG.APPS_SCRIPT_URL;
+      var res = await fetch(base + '?action=kioskToken&key=' + encodeURIComponent(adminKey));
+      var json = await res.json();
+
+      if (!json.ok) {
+        offlineEl.style.display = 'block';
+        offlineEl.textContent = '設定エラー：' + (json.reason || '');
+        return;
+      }
+      offlineEl.style.display = 'none';
+
+      if (json.operationEnabled === false) {
+        qrEl.innerHTML = '';
+        countdownEl.textContent = '';
+        offlineEl.style.display = 'block';
+        offlineEl.textContent = '本日は受付を休止しています';
+        clearTimeout(retryTimer);
+        retryTimer = setTimeout(fetchToken, 30000);
+        return;
+      }
+
+      renderQr(json.token);
+      startCountdown(json.remainSeconds || json.windowSeconds || 30);
+    } catch (e) {
+      offlineEl.style.display = 'block';
+      offlineEl.textContent = '再接続中…';
+      clearTimeout(retryTimer);
+      retryTimer = setTimeout(fetchToken, 5000);
+    }
+  }
+
+  if (!adminKey) {
+    offlineEl.style.display = 'block';
+    offlineEl.textContent = 'URLに管理キー（?key=...）が指定されていません。README.mdを確認してください。';
+  } else {
+    fetchToken();
+  }
+})();
+</script>
+</body>
+</html>

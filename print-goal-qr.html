@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ゴールQRコード印刷用</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="assets/config.js"></script>
+<style>
+  body { font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; margin: 0; }
+  .toolbar { text-align: center; margin: 20px; }
+  .toolbar button { font-size: 18px; padding: 10px 24px; }
+  .page {
+    width: 190mm;
+    margin: 0 auto 10mm;
+    box-sizing: border-box;
+    padding: 20mm;
+    text-align: center;
+    page-break-after: always;
+    border: 1px dashed #ccc;
+  }
+  .page h2 { font-size: 36px; margin-bottom: 10mm; color: #084a51; }
+  .qrbox { display: inline-block; }
+  .sub { font-size: 18px; margin-top: 10mm; color: #333; }
+  .warn { color: #b3261e; text-align: center; font-size: 16px; }
+  @media print {
+    .toolbar, .warn { display: none; }
+    .page { border: none; }
+  }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <button onclick="window.print()">印刷する（A4・3ページ）</button>
+</div>
+<p class="warn" id="warn" style="display:none">
+  ※ assets/config.js の SITE_BASE_URL が未設定です。設定してからこのページを開き直してください。
+</p>
+<div id="pages"></div>
+<script>
+  var courses = [
+    { code: 'A', label: 'Aコース ゴール' },
+    { code: 'B', label: 'Bコース ゴール' },
+    { code: 'C', label: 'Cコース ゴール' }
+  ];
+
+  var base = window.WB_CONFIG.SITE_BASE_URL;
+  if (!base || base.indexOf('http') !== 0) {
+    document.getElementById('warn').style.display = 'block';
+  }
+
+  var pagesEl = document.getElementById('pages');
+  courses.forEach(function (c) {
+    var page = document.createElement('div');
+    page.className = 'page';
+
+    var h2 = document.createElement('h2');
+    h2.textContent = c.label;
+
+    var qrDiv = document.createElement('div');
+    qrDiv.className = 'qrbox';
+
+    var sub = document.createElement('p');
+    sub.className = 'sub';
+    sub.textContent = 'ゴールしたら、このQRコードをスマートフォンの「カメラ」アプリで読み取ってください';
+
+    page.appendChild(h2);
+    page.appendChild(qrDiv);
+    page.appendChild(sub);
+    pagesEl.appendChild(page);
+
+    var url = (base || 'https://example.com/') + 'goal.html?c=' + c.code;
+    new QRCode(qrDiv, { text: url, width: 400, height: 400, correctLevel: QRCode.CorrectLevel.M });
+  });
+</script>
+</body>
+</html>
