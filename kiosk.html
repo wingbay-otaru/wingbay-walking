@@ -16,6 +16,9 @@
   <p id="countdown" class="countdown"></p>
   <p id="offline" class="offline" style="display:none"></p>
 </div>
+<button id="fullscreenBtn" style="display:none;position:fixed;top:16px;right:16px;z-index:100;padding:14px 20px;font-size:16px;font-weight:bold;background:#f2a541;color:#fff;border:none;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,0.3);">
+  画面いっぱいに表示する（最初に1回タップしてください）
+</button>
 <script>
 (function () {
   var params = new URLSearchParams(window.location.search);
@@ -25,6 +28,31 @@
   var offlineEl = document.getElementById('offline');
   var countdownTimer = null;
   var retryTimer = null;
+
+  // ---- 全画面表示（アドレスバー・タブを隠す。対応端末のみ） ----
+  // ブラウザの仕様上、タップなどの操作がないと全画面化できないため、
+  // ボタンを表示してスタッフにタップしてもらう。一度全画面にすれば、
+  // 以後は（iPadのガイドアクセス・Androidの画面固定と組み合わせて）
+  // アドレスバーやタブ切り替えに触れられなくなる。
+  var fsBtn = document.getElementById('fullscreenBtn');
+  function isFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+  function updateFsButton() {
+    if (!document.fullscreenEnabled && !document.webkitFullscreenEnabled) {
+      fsBtn.style.display = 'none'; // この端末は全画面表示に対応していない
+      return;
+    }
+    fsBtn.style.display = isFullscreen() ? 'none' : 'block';
+  }
+  fsBtn.addEventListener('click', function () {
+    var el = document.documentElement;
+    var req = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (req) req.call(el).catch(function () {});
+  });
+  document.addEventListener('fullscreenchange', updateFsButton);
+  document.addEventListener('webkitfullscreenchange', updateFsButton);
+  updateFsButton();
 
   // ---- 画面スリープ防止（対応端末のみ） ----
   var wakeLock = null;
