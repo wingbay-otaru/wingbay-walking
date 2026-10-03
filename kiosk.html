@@ -68,11 +68,19 @@
     if (document.visibilityState === 'visible') requestWakeLock();
   });
   requestWakeLock();
+  // 更新間隔が長い（例：5分）ときに「287秒後」のような読みにくい表示にならないよう、
+  // 1分以上は「○分○秒」の形にする。
+  function formatRemain(seconds) {
+    if (seconds < 60) return seconds + '秒後に更新';
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    return s === 0 ? (m + '分後に更新') : (m + '分' + s + '秒後に更新');
+  }
 
   function startCountdown(seconds) {
     clearInterval(countdownTimer);
     var remain = Math.max(1, seconds);
-    countdownEl.textContent = remain + '秒後に更新';
+    countdownEl.textContent = formatRemain(remain);
     countdownTimer = setInterval(function () {
       remain -= 1;
       if (remain <= 0) {
@@ -80,10 +88,9 @@
         fetchToken();
         return;
       }
-      countdownEl.textContent = remain + '秒後に更新';
+      countdownEl.textContent = formatRemain(remain);
     }, 1000);
   }
-
   function renderQr(token) {
     var base = window.WB_CONFIG.SITE_BASE_URL;
     var url = base + 'start.html?t=' + encodeURIComponent(token);
