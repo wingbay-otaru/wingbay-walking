@@ -148,7 +148,8 @@ body.kiosk {
   font-weight: bold;
   margin-top: 24px;
   color: var(--wb-accent);
-　text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+　 text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+
 }
 .offline {
   font-size: 20px;
