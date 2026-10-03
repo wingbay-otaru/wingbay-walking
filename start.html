@@ -12,10 +12,12 @@
 </head>
 <body>
 <div class="wrap">
+  <img src="assets/mascot.png" alt="" class="mascot">
   <h1 class="logo">ウイングベイウォーキング</h1>
   <div class="card">
     <p class="message" id="message"></p>
     <div class="spinner" id="spinner"></div>
+    <a id="pointButton" class="button" style="display:none" target="_top"></a>
   </div>
   <p class="tip" id="cameraTip"></p>
   <div class="langbar">
@@ -33,6 +35,8 @@
   function applyLang() {
     document.getElementById('cameraTip').textContent = t('camera_tip');
     document.getElementById('langLabel').textContent = t('lang_label');
+    var btn = document.getElementById('pointButton');
+    if (btn.style.display !== 'none') btn.textContent = t('finish_button');
   }
 
   var langSelect = document.getElementById('langSelect');
@@ -73,6 +77,12 @@
       var json = await callApi('start', { deviceId: deviceId, token: token });
       lastJson = json;
       setMessage(renderStartMessage(json), !json.ok);
+      if (json.ok && json.phase === 'finish' && json.pointUrl) {
+        var btn = document.getElementById('pointButton');
+        btn.href = json.pointUrl;
+        btn.textContent = t('finish_button');
+        btn.style.display = 'inline-block';
+      }
     } catch (e) {
       lastJson = { ok: false, reason: 'network_error' };
       setMessage(t('start_error'), true);
