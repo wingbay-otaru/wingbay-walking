@@ -1,8 +1,8 @@
 // 画面に表示する文言の辞書。
 // 言語を追加・修正したいときは、このファイルだけを編集してください。
 //
-// 注意：th（タイ語）・zh（中国語）は、まだ正式な翻訳が入っていません（日本語のコピーです）。
-// 実際の運用前に、正しい翻訳に差し替えることをおすすめします。
+// 対応言語は日本語(ja)と英語(en)のみ。言語を増やすときは、ここに辞書を追加したうえで、
+// start.html と goal.html の言語選択（select）にも選択肢を足してください。
 
 window.WB_DICT = {
   ja: {
@@ -54,10 +54,6 @@ window.WB_DICT = {
     lang_label: 'Language'
   }
 };
-
-// タイ語・中国語は未翻訳のため、暫定的に日本語をコピーしておく（画面が空白にならないようにするため）
-window.WB_DICT.th = window.WB_DICT.th || window.WB_DICT.ja;
-window.WB_DICT.zh = window.WB_DICT.zh || window.WB_DICT.ja;
 
 function t(key, vars) {
   var lang = 'ja';
