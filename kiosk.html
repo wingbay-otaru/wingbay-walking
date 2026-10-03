@@ -14,6 +14,7 @@
   <p class="kiosk-sub">スマートフォンの「カメラ」アプリでこのQRコードを読み取ってください</p>
   <div id="qrcode" class="qrbox"></div>
   <p id="countdown" class="countdown"></p>
+  <p id="todayCount" class="today-count" style="display:none"></p>
   <p id="offline" class="offline" style="display:none"></p>
 </div>
 <button id="fullscreenBtn" style="display:none;position:fixed;top:16px;right:16px;z-index:100;padding:14px 20px;font-size:16px;font-weight:bold;background:#f2a541;color:#fff;border:none;border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,0.3);">
@@ -115,6 +116,14 @@
 
       renderQr(json.token);
       startCountdown(json.remainSeconds || json.windowSeconds || 30);
+
+      var countEl = document.getElementById('todayCount');
+      if (typeof json.todayCompletions === 'number') {
+        countEl.textContent = '本日のウォーキング達成：' + json.todayCompletions + '人';
+        countEl.style.display = 'block';
+      } else {
+        countEl.style.display = 'none';
+      }
     } catch (e) {
       offlineEl.style.display = 'block';
       offlineEl.textContent = '再接続中…';
