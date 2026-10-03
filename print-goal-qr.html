@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>ゴールQRコード印刷用</title>
+<title>折り返し地点QRコード印刷用</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="assets/config.js"></script>
 <style>
@@ -18,9 +18,20 @@
     page-break-after: always;
     border: 1px dashed #ccc;
   }
-  .page h2 { font-size: 36px; margin-bottom: 10mm; color: #084a51; }
+  .page h2 { font-size: 40px; margin-bottom: 8mm; color: #0b4f7a; }
   .qrbox { display: inline-block; }
-  .sub { font-size: 18px; margin-top: 10mm; color: #333; }
+  .sub { font-size: 20px; margin-top: 8mm; color: #333; line-height: 1.6; }
+  /* 「読んで終わり」と誤解されないよう、次にすることを枠で強調する */
+  .next {
+    margin-top: 8mm;
+    padding: 6mm;
+    border: 3px solid #1c86c7;
+    border-radius: 4mm;
+    font-size: 22px;
+    font-weight: bold;
+    color: #0b4f7a;
+    line-height: 1.7;
+  }
   .warn { color: #b3261e; text-align: center; font-size: 16px; }
   @media print {
     .toolbar, .warn { display: none; }
@@ -38,9 +49,9 @@
 <div id="pages"></div>
 <script>
   var courses = [
-    { code: 'A', label: 'Aコース ゴール' },
-    { code: 'B', label: 'Bコース ゴール' },
-    { code: 'C', label: 'Cコース ゴール' }
+    { code: 'A', label: 'Aコース 折り返し地点' },
+    { code: 'B', label: 'Bコース 折り返し地点' },
+    { code: 'C', label: 'Cコース 折り返し地点' }
   ];
 
   var base = window.WB_CONFIG.SITE_BASE_URL;
@@ -61,11 +72,17 @@
 
     var sub = document.createElement('p');
     sub.className = 'sub';
-    sub.textContent = 'ゴールしたら、このQRコードをスマートフォンの「カメラ」アプリで読み取ってください';
+    sub.innerHTML = 'ここが折り返し地点です。<br>このQRコードをスマートフォンの「カメラ」アプリで読み取ってください';
+
+    // ここで終わりではないことを、はっきり伝える
+    var next = document.createElement('p');
+    next.className = 'next';
+    next.innerHTML = 'このあとインフォメーションにお戻りいただき、<br>はじめに読み取ったQRコードを<br>もう一度読み取るとポイントがもらえます';
 
     page.appendChild(h2);
     page.appendChild(qrDiv);
     page.appendChild(sub);
+    page.appendChild(next);
     pagesEl.appendChild(page);
 
     var url = (base || 'https://example.com/') + 'goal.html?c=' + c.code;
