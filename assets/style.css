@@ -1,11 +1,12 @@
 :root {
-  --wb-primary: #0a6b74;
-  --wb-primary-dark: #084a51;
+  --wb-primary: #1c86c7;
+  --wb-primary-dark: #0b4f7a;
+  --wb-sky: #4fb3e8;
   --wb-accent: #f2a541;
-  --wb-bg: #f7faf9;
+  --wb-bg: #eaf5fc;
   --wb-card-bg: #ffffff;
-  --wb-text: #1f2d2f;
-  --wb-text-muted: #5b6b6d;
+  --wb-text: #0e2a38;
+  --wb-text-muted: #5b7584;
   --wb-success: #1f7a4d;
   --wb-error: #b3261e;
   --wb-radius: 16px;
@@ -102,7 +103,7 @@ body {
 
 /* ===== キオスク（iPad）表示 ===== */
 body.kiosk {
-  background: var(--wb-primary-dark);
+  background: linear-gradient(180deg, var(--wb-primary-dark) 0%, var(--wb-primary) 60%, var(--wb-sky) 100%);
   color: #fff;
 }
 .kiosk-wrap {
@@ -117,6 +118,15 @@ body.kiosk {
 .kiosk-wrap h1 {
   font-size: 32px;
   margin-bottom: 8px;
+}
+.mascot {
+  width: 96px;
+  height: auto;
+  margin-bottom: 8px;
+}
+.kiosk-wrap .mascot {
+  width: 120px;
+  margin-bottom: 4px;
 }
 .kiosk-sub {
   font-size: 20px;
