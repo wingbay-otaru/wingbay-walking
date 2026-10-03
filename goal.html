@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>ウイングベイウォーキング - ゴール</title>
+<title>ウイングベイウォーキング - 折り返し</title>
 <link rel="stylesheet" href="assets/style.css">
 <script src="assets/config.js"></script>
 <script src="assets/dict.js"></script>
@@ -12,11 +12,11 @@
 </head>
 <body>
 <div class="wrap">
+  <img src="assets/mascot.png" alt="" class="mascot">
   <h1 class="logo">ウイングベイウォーキング</h1>
   <div class="card">
     <p class="message" id="message"></p>
     <div class="spinner" id="spinner"></div>
-    <a id="pointButton" class="button" style="display:none" target="_top"></a>
   </div>
   <p class="tip" id="cameraTip"></p>
   <div class="langbar">
@@ -36,8 +36,6 @@
   function applyLang() {
     document.getElementById('cameraTip').textContent = t('camera_tip');
     document.getElementById('langLabel').textContent = t('lang_label');
-    var btn = document.getElementById('pointButton');
-    if (btn.style.display !== 'none') btn.textContent = t('goal_button');
     if (lastJson) setMessage(renderGoalMessage(lastJson), !lastJson.ok);
   }
 
@@ -64,18 +62,12 @@
   async function run() {
     var deviceId = getOrCreateDeviceId();
     try {
-      var json = await callApi('complete', { deviceId: deviceId, course: course });
+      var json = await callApi('turn', { deviceId: deviceId, course: course });
       lastJson = json;
       setMessage(renderGoalMessage(json), !json.ok);
-      if (json.ok && json.pointUrl) {
-        var btn = document.getElementById('pointButton');
-        btn.href = json.pointUrl;
-        btn.textContent = t('goal_button');
-        btn.style.display = 'inline-block';
-      }
     } catch (e) {
       lastJson = { ok: false, reason: 'network_error' };
-      setMessage(t('goal_error'), true);
+      setMessage(t('turn_error'), true);
     }
   }
   run();
