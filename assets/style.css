@@ -133,8 +133,62 @@ body.kiosk {
   margin-top: 16px;
   opacity: 0.8;
 }
+.today-count {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 20px;
+  color: var(--wb-accent);
+}
 .offline {
   font-size: 20px;
   margin-top: 16px;
   color: var(--wb-accent);
+}
+
+/* ===== 管理者用集計ページ ===== */
+.admin-updated {
+  font-size: 13px;
+  color: var(--wb-text-muted);
+  margin: 0 0 20px;
+}
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.admin-stat {
+  background: var(--wb-bg);
+  border-radius: 12px;
+  padding: 16px 8px;
+}
+.admin-stat .num {
+  font-size: 32px;
+  font-weight: bold;
+  color: var(--wb-primary-dark);
+  line-height: 1.2;
+}
+.admin-stat .label {
+  font-size: 13px;
+  color: var(--wb-text-muted);
+  margin-top: 4px;
+}
+.admin-courses {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 15px;
+}
+.admin-courses th, .admin-courses td {
+  padding: 8px 6px;
+  border-bottom: 1px solid #e5e9e8;
+}
+.admin-refresh {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 15px;
+  background: var(--wb-primary);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
 }
