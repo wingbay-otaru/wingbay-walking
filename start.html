@@ -24,8 +24,6 @@
     <select id="langSelect">
       <option value="ja">日本語</option>
       <option value="en">English</option>
-      <option value="th">ภาษาไทย</option>
-      <option value="zh">中文</option>
     </select>
   </div>
 </div>
@@ -40,6 +38,9 @@
 
   var langSelect = document.getElementById('langSelect');
   try { langSelect.value = localStorage.getItem('wb_lang') || 'ja'; } catch (e) {}
+  // 廃止した言語（タイ語・中国語）が端末に保存されたままの場合は選択欄が空になるため、
+  // 選択肢に無い値だったときは日本語に戻す。
+  if (!langSelect.value) langSelect.value = 'ja';
   applyLang();
 
   var lastJson = null;
